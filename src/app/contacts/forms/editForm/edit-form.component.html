@@ -1,0 +1,117 @@
+<div class="max-w-md mx-auto mt-10 bg-white p-6 rounded shadow">
+  <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+    <span class="material-symbols-outlined text-blue-600">contacts</span>
+    Editar Contacto
+  </h2>
+
+  <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
+    <div class="mb-4 relative group">
+      <label
+        for="nombre"
+        class="block text-sm font-medium text-gray-700 flex items-center gap-1"
+      >
+        <span class="material-symbols-outlined text-gray-600">badge</span>
+        Nombre
+      </label>
+      <input
+        id="nombre"
+        formControlName="nombre"
+        class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+        placeholder="Nombre"
+        [class.border-red-500]="
+          editForm.get('nombre')?.invalid && editForm.get('nombre')?.touched
+        "
+      />
+      <span
+        class="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+      >
+        Introduce tu nombre completo
+      </span>
+      <div
+        *ngIf="
+          editForm.get('nombre')?.invalid && editForm.get('nombre')?.touched
+        "
+        class="text-red-500 text-sm"
+      >
+        El nombre es obligatorio.
+      </div>
+    </div>
+
+    <div class="mb-4 relative group">
+      <label
+        for="email"
+        class="block text-sm font-medium text-gray-700 flex items-center gap-1"
+      >
+        <span class="material-symbols-outlined text-gray-600">mail</span> Correo
+        Electrónico
+      </label>
+      <input
+        id="email"
+        formControlName="email"
+        class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+        placeholder="Correo electrónico"
+        [class.border-red-500]="
+          editForm.get('email')?.invalid && editForm.get('email')?.touched
+        "
+      />
+      <span
+        class="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+      >
+        Introduce un email válido (ejemplo&#64;correo.com)
+      </span>
+      <div
+        *ngIf="editForm.get('email')?.invalid && editForm.get('email')?.touched"
+        class="text-red-500 text-sm"
+      >
+        {{ getEmailErrorMsg() }}
+      </div>
+    </div>
+
+    <div class="mb-4 relative group">
+      <label
+        for="phone"
+        class="block text-sm font-medium text-gray-700 flex items-center gap-1"
+      >
+        <span class="material-symbols-outlined text-gray-600">call</span>
+        Teléfono
+      </label>
+      <input
+        id="phone"
+        formControlName="phone"
+        class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+        placeholder="Teléfono"
+        [class.border-red-500]="
+          editForm.get('phone')?.invalid && editForm.get('phone')?.touched
+        "
+      />
+      <span
+        class="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+      >
+        Solo números (Ej: 1234567890)
+      </span>
+      <div
+        *ngIf="editForm.get('phone')?.invalid && editForm.get('phone')?.touched"
+        class="text-red-500 text-sm"
+      >
+        El teléfono es obligatorio.
+      </div>
+    </div>
+
+    <button
+      type="submit"
+      class="w-full bg-blue-600 text-white p-2 rounded mt-4 flex items-center justify-center gap-2 hover:bg-blue-700 transition disabled:opacity-50"
+      [disabled]="editForm.invalid"
+    >
+      <span class="material-symbols-outlined">save</span> Actualizar Contacto
+    </button>
+  </form>
+  <a
+    type="button"
+    routerLink="/contacts/list"
+    class="bg-gray-400 text-white p-2 rounded mt-4 flex items-center justify-center gap-2 hover:bg-gray-500 transition"
+  >
+    <span class="material-symbols-outlined">arrow_back</span>
+    Volver
+  </a>
+</div>
+<router-outlet></router-outlet>

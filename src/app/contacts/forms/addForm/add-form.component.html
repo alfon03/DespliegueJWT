@@ -1,0 +1,163 @@
+<div class="max-w-2xl mx-auto mt-10 bg-white p-6 rounded shadow-lg">
+  <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+    <span class="material-symbols-outlined text-blue-500">contacts</span>
+    Gestión de Contactos
+  </h2>
+
+  <form [formGroup]="contactForm" (ngSubmit)="saveContacts()">
+    <div formArrayName="contacts">
+      <div
+        *ngFor="let contact of contacts.controls; let i = index"
+        [formGroupName]="i"
+        class="mb-4 p-4 border rounded bg-gray-50"
+      >
+        <div class="flex items-center gap-2 mb-2">
+          <span class="material-symbols-outlined text-gray-600">badge</span>
+          <label class="block text-sm font-medium text-gray-700">Nombre</label>
+        </div>
+        <input
+          type="text"
+          formControlName="nombre"
+          class="w-full border p-2 mb-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+          [ngClass]="{
+            'border-red-500':
+              contact.get('nombre')?.invalid && contact.get('nombre')?.touched
+          }"
+          placeholder="Nombre"
+        />
+        <div
+          *ngIf="
+            contact.get('nombre')?.invalid && contact.get('nombre')?.touched
+          "
+          class="text-red-500 text-xs"
+        >
+          El nombre es obligatorio.
+        </div>
+
+        <div class="flex items-center gap-2 mb-2">
+          <span class="material-symbols-outlined text-gray-600">mail</span>
+          <label class="block text-sm font-medium text-gray-700"
+            >Correo electrónico</label
+          >
+        </div>
+        <div class="relative group">
+          <input
+            type="email"
+            formControlName="email"
+            class="w-full border p-2 mb-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+            [ngClass]="{
+              'border-red-500':
+                contact.get('email')?.invalid && contact.get('email')?.touched
+            }"
+            placeholder="Correo electrónico"
+          />
+          <span
+            class="absolute top-full left-1/2 -translate-x-1/2 mt-1 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+          >
+            Introduce un email válido (ejemplo&#64;correo.com)
+          </span>
+        </div>
+        <div
+          *ngIf="contact.get('email')?.invalid && contact.get('email')?.touched"
+          class="text-red-500 text-xs"
+        >
+          Correo inválido.
+        </div>
+
+        <div class="flex items-center gap-2 mb-2">
+          <span class="material-symbols-outlined text-gray-600">call</span>
+          <label class="block text-sm font-medium text-gray-700"
+            >Teléfono</label
+          >
+        </div>
+        <input
+          type="tel"
+          formControlName="telefono"
+          class="w-full border p-2 mb-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+          [ngClass]="{
+            'border-red-500':
+              contact.get('telefono')?.invalid &&
+              contact.get('telefono')?.touched
+          }"
+          placeholder="Teléfono"
+        />
+        <div
+          *ngIf="
+            contact.get('telefono')?.invalid && contact.get('telefono')?.touched
+          "
+          class="text-red-500 text-xs"
+        >
+          El teléfono es obligatorio.
+        </div>
+
+        <div class="flex items-center gap-2 mb-2">
+          <span class="material-symbols-outlined text-gray-600">home</span>
+          <label class="block text-sm font-medium text-gray-700"
+            >Dirección</label
+          >
+        </div>
+        <input
+          type="text"
+          formControlName="direccion"
+          class="w-full border p-2 mb-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+          [ngClass]="{
+            'border-red-500':
+              contact.get('direccion')?.invalid &&
+              contact.get('direccion')?.touched
+          }"
+          placeholder="Dirección"
+        />
+        <div
+          *ngIf="
+            contact.get('direccion')?.invalid &&
+            contact.get('direccion')?.touched
+          "
+          class="text-red-500 text-xs"
+        >
+          La dirección es obligatoria.
+        </div>
+
+        <button
+          type="button"
+          class="bg-red-600 text-white p-2 rounded-md group"
+          (click)="removeContact(i)"
+        >
+          <span class="material-symbols-outlined">delete</span>
+          <span
+            class="absolute top-full left-1/2 -translate-x-1/2 mt-1 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+          >
+            Eliminar contacto
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      class="w-full bg-green-600 text-white p-2 rounded mt-4 flex items-center justify-center gap-2 group"
+      (click)="addContact()"
+    >
+      <span class="material-symbols-outlined">add</span>
+      Añadir Contacto
+      <span
+        class="absolute mt-10 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+      >
+        Agregar nuevo contacto
+      </span>
+    </button>
+
+    <button
+      type="submit"
+      class="w-full bg-blue-600 text-white p-2 rounded mt-4 flex items-center justify-center gap-2 group"
+      [disabled]="contactForm.invalid"
+    >
+      <span class="material-symbols-outlined">save</span>
+      Guardar Contactos
+      <span
+        class="absolute mt-10 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+      >
+        Guardar todos los contactos
+      </span>
+    </button>
+  </form>
+</div>
