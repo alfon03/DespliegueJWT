@@ -3,6 +3,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { User, AuthResponse } from '../../interfaces/auth';
 import { Router } from '@angular/router';
+import jwt_decode from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root',
@@ -15,9 +16,9 @@ export class AuthService {
   private router: Router = inject(Router);
 
   constructor() {
-    const userId = localStorage.getItem('userId');
-    if (userId) {
-      this._userId = userId;
+    const token = localStorage.getItem('token');
+    if (token) {
+      this._userId = this.decodeToken(token).userId;
       this.isLoggedSignal.set(true);
     }
   }
@@ -33,8 +34,9 @@ export class AuthService {
       .pipe(
         tap({
           next: (response) => {
-            this._userId = response.userId;
-            localStorage.setItem('userId', response.userId);
+            const token = response.token;
+            this._userId = this.decodeToken(token).userId;
+            localStorage.setItem('token', token);
             this.isLoggedSignal.set(true);
           },
         })
@@ -51,9 +53,18 @@ export class AuthService {
   }
 
   logOut() {
-    localStorage.removeItem('userId');
+    localStorage.removeItem('token');
     this._userId = '';
     this.isLoggedSignal.set(false);
     this.router.navigateByUrl('/login');
+  }
+
+  private decodeToken(token: string): any {
+    try {
+      return jwt_decode(token);
+    } catch (error) {
+      console.error('Error decodificando el token', error);
+      return {};
+    }
   }
 }
