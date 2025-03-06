@@ -13,3 +13,9 @@ export interface AuthResponse {
 export interface CheckEmailResponse {
   exists: boolean;
 }
+
+export interface Token{
+  userId: string;
+  exp: number;
+  iat: number;
+}

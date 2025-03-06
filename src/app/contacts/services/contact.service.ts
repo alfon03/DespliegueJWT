@@ -11,33 +11,39 @@ export class ContactsService {
   private http: HttpClient = inject(HttpClient);
   private authService: AuthService = inject(AuthService);
   private urlBase: string = 'http://localhost:3000/api/contactos';
-
+  private userId: string = '';
+  
   private contactsSignal = signal<Contact[]>([]);
 
   constructor() {
-    this.updateUserId();
+    if (this.authService.isLogged()) {
+      this.userId = this.authService.userId;
+    }
   }
 
   get contacts() {
     return this.contactsSignal;
   }
 
-  private updateUserId(): void {
-    if (this.authService.isLogged()) {
-      const userId = this.authService.userId;
+  
+
+  getContacts(): void{
+    console.log('getcontacts')
+    const token = localStorage.getItem('token') || '';
+    // const headers: HttpHeaders = new HttpHeaders()
+    // .set('Authorization', `Bearer ${token}`);
+    this.userId = this.authService.userId;
+    if (this.userId) {
+      this.http.get<Contact[]>(`${this.urlBase}/${this.userId}`)
+      // this.http.get<Contact[]>(`${this.urlBase}/${this.userId}`, {headers})
+      .subscribe({
+        next: contacts => {
+          console.log('Contacts: ',contacts)
+          this.contactsSignal.set(contacts)
+        },
+        error: error => console.log('Error: ', error)
+      })
     }
-  }
-
-  getContacts(): void {
-    this.updateUserId();
-    const userId = this.authService.userId;
-
-    if (!userId) return;
-
-    this.http.get<Contact[]>(`${this.urlBase}/${userId}`).subscribe({
-      next: (contacts) => this.contactsSignal.set(contacts),
-      error: (error) => console.error('Error al obtener contactos:', error),
-    });
   }
 
   addContact(contact: Omit<Contact, 'id'>): Observable<Contact> {

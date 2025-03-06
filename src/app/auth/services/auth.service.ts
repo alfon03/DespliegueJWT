@@ -1,9 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { Observable, tap } from 'rxjs';
-import { User, AuthResponse } from '../../interfaces/auth';
+import { catchError, map, Observable, of, tap } from 'rxjs';
+import { User, AuthResponse, Token } from '../../interfaces/auth';
 import { Router } from '@angular/router';
-import jwt_decode from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root',
@@ -16,17 +16,41 @@ export class AuthService {
   private router: Router = inject(Router);
 
   constructor() {
-    const token = localStorage.getItem('token');
-    if (token) {
-      this._userId = this.decodeToken(token).userId;
-      this.isLoggedSignal.set(true);
+    let userId = localStorage.getItem('userId');
+      if (userId) {
+        this._userId = userId;
+        this.isLoggedSignal.set(true);
     }
+    this.validateToken().subscribe(resp=> console.log(resp))
   }
 
   get isLogged() {
     return this.isLoggedSignal.asReadonly();
   }
+  validateToken(){
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${localStorage.getItem('token') || ''}`) 
+    // ESTO NO ES EQUIVALENTE YA QUE SET DEVUELVE UNA CABECERA NUEVA NO MODIFICA 
+    // const header = new HttpHeaders()
+    // header.set('Authorization', `Bearer ${localStorage.getItem('token') || ''}`)
+    return this.http.get<AuthResponse>(`${this.baseUrl}/verify`, {headers})
+    .pipe(
+      map( resp => {
+        this.setUserSession(resp.token)
+        return true;
+      }),
+      catchError( err => of(false))
 
+    )
+  }
+  setUserSession(token: string){
+    const decodeToken = this.decodeToken(token);
+    if(decodeToken){
+      this._userId = decodeToken.userId;
+      localStorage.setItem('token', token);
+      this.isLoggedSignal.set(true);
+
+    }
+  }
   login(email: string, password: string): Observable<AuthResponse> {
     console.log('Email: ', email, 'Password: ', password);
     return this.http
@@ -34,10 +58,7 @@ export class AuthService {
       .pipe(
         tap({
           next: (response) => {
-            const token = response.token;
-            this._userId = this.decodeToken(token).userId;
-            localStorage.setItem('token', token);
-            this.isLoggedSignal.set(true);
+            this.setUserSession(response.token)
           },
         })
       );
@@ -59,12 +80,12 @@ export class AuthService {
     this.router.navigateByUrl('/login');
   }
 
-  private decodeToken(token: string): any {
+  decodeToken(token: string): Token | null {
     try {
-      return jwt_decode(token);
+      return jwtDecode(token);
     } catch (error) {
       console.error('Error decodificando el token', error);
-      return {};
+      return null;
     }
   }
 }
