@@ -18,7 +18,7 @@ export class ValidateEmailService implements AsyncValidator {
     const email = control.value;
     return this.http
       .get<CheckEmailResponse>(
-        `http://localhost:3000/api/auth/check-email/${email}`
+        `https://user-contacts-mongo.vercel.app/api/auth/check-email/${email}`
       )
       .pipe(
         map((resp) => {

@@ -10,9 +10,9 @@ import { Contact } from '../../interfaces/contact';
 export class ContactsService {
   private http: HttpClient = inject(HttpClient);
   private authService: AuthService = inject(AuthService);
-  private urlBase: string = 'http://localhost:3000/api/contactos';
+  private urlBase: string = 'https://user-contacts-mongo.vercel.app/api/contactos';
   private userId: string = '';
-  
+
   private contactsSignal = signal<Contact[]>([]);
 
   constructor() {

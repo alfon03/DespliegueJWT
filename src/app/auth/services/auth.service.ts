@@ -10,7 +10,7 @@ import {jwtDecode} from 'jwt-decode';
 })
 export class AuthService {
   private http: HttpClient = inject(HttpClient);
-  private baseUrl: string = 'http://localhost:3000/api/auth';
+  private baseUrl: string = 'https://user-contacts-mongo.vercel.app/api/auth';
   private _userId: string = '';
   private isLoggedSignal = signal<boolean>(false);
   private router: Router = inject(Router);
