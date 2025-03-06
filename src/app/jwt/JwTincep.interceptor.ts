@@ -10,4 +10,4 @@ export const JwTincep: HttpInterceptorFn = (req, next) => {
     })
   }
   return next(req);
-};
+}; 
